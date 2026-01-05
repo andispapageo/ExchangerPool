@@ -9,13 +9,13 @@ namespace ExchangerPool.Controllers;
 public class LiquidityController : ControllerBase
 {
     private readonly GetBestPriceUseCase _getBestPriceUseCase;
-    private readonly GetArbitrageOpportunitiesUseCase _getArbitrageUseCase;
+    private readonly GetArbitrageRiskUseCase _getArbitrageUseCase;
     private readonly GetAvailableSymbolsUseCase _getSymbolsUseCase;
     private readonly ILogger<LiquidityController> _logger;
 
     public LiquidityController(
         GetBestPriceUseCase getBestPriceUseCase,
-        GetArbitrageOpportunitiesUseCase getArbitrageUseCase,
+        GetArbitrageRiskUseCase getArbitrageUseCase,
         GetAvailableSymbolsUseCase getSymbolsUseCase,
         ILogger<LiquidityController> logger)
     {
@@ -40,7 +40,7 @@ public class LiquidityController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Getting best price for {Symbol}", symbol);
+            _logger.LogInformation("Getting best price for {Symbol}", symbol?.ToUpper());
             var result = await _getBestPriceUseCase.ExecuteAsync(symbol, cancellationToken);
             return Ok(result);
         }

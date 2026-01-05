@@ -1,27 +1,32 @@
 ﻿using Domain.Core.Interfaces;
+using Domain.Core.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Infrastructure.Binance.Config
+namespace Infrastructure.Binance.Config;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public const string SectionName = "Exchanges:Binance";
+    public const string OptionsName = "Binance";
+    public static IServiceCollection AddBinance(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddBinance(this IServiceCollection services)
-        {
-            services.AddHttpClient<BinanceClient>(client =>
-            {
-                client.BaseAddress = new Uri("https://api.binance.com/");
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-                client.Timeout = TimeSpan.FromSeconds(30);
-            });
+        var options = configuration.GetSection(SectionName).Get<ExchangeOptions>()
+            ?? new ExchangeOptions { BaseUrl = "https://api.binance.com/" };
 
-            services.AddSingleton<IExchangeClient>(sp => sp.GetRequiredService<BinanceClient>());
-
+        if (!options.Enabled)
             return services;
-        }
+
+        services.Configure<ExchangeOptions>(OptionsName, configuration.GetSection(SectionName));
+        services.AddHttpClient<BinanceClient>(client =>
+        {
+            client.BaseAddress = new Uri(options.BaseUrl);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+        });
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, BinanceClient>(sp =>
+            sp.GetRequiredService<BinanceClient>()));
+        return services;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+
 namespace Infrastructure.Coinbase.Models;
 public sealed record CoinbaseProductResponse(
     [property: JsonPropertyName("id")] string Id,
@@ -9,7 +10,5 @@ public sealed record CoinbaseProductResponse(
 public sealed record CoinbaseTickerResponse(
     [property: JsonPropertyName("bid")] string Bid,
     [property: JsonPropertyName("ask")] string Ask,
-    [property: JsonPropertyName("price")] string Price);
-
-public sealed record CoinbaseStatsResponse(
+    [property: JsonPropertyName("price")] string Price,
     [property: JsonPropertyName("volume")] string Volume);

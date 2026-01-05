@@ -1,6 +1,6 @@
 @ExchangerPool_HostAddress = http://localhost:5081
 
-GET {{ExchangerPool_HostAddress}}/weatherforecast/
+GET {{ExchangerPool_HostAddress}}
 Accept: application/json
 
 ###
