@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Common\Application.Common.csproj" />
+    <ProjectReference Include="..\ExchangerPool.ServiceDefaults\ExchangerPool.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Infrastructure.Binance\Infrastructure.Binance.csproj" />
+    <ProjectReference Include="..\Infrastructure.Caching\Infrastructure.Caching.csproj" />
+    <ProjectReference Include="..\Infrastructure.Coinbase\Infrastructure.Coinbase.csproj" />
+    <ProjectReference Include="..\Infrastructure.Kraken\Infrastructure.Kraken.csproj" />
+  </ItemGroup>
+
+</Project>
