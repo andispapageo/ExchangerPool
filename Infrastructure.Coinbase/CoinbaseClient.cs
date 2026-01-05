@@ -1,107 +1,107 @@
 ﻿using Domain.Core.Entities;
 using Domain.Core.Interfaces;
+using Domain.Core.Options;
 using Infrastructure.Coinbase.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 
-namespace Infrastructure.Coinbase
+namespace Infrastructure.Coinbase;
+
+public sealed class CoinbaseClient : IExchangeClient
 {
-    public sealed class CoinbaseClient : IExchangeClient
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<CoinbaseClient> _logger;
+    private readonly EndpointOptions _endpoints;
+
+    private static readonly string[] QuoteCurrencies = ["USDT", "USDC", "EUR", "GBP", "BTC", "ETH", "USD"];
+    public string ExchangeName => "Coinbase";
+
+    public CoinbaseClient(
+        HttpClient httpClient,
+        ILogger<CoinbaseClient> logger,
+        IOptionsMonitor<ExchangeOptions> options)
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<CoinbaseClient> _logger;
+        _httpClient = httpClient;
+        _logger = logger;
+        _endpoints = options.Get("Coinbase").Endpoints;
 
-        private static readonly string[] QuoteCurrencies = ["USD", "USDT", "USDC", "EUR", "GBP", "BTC", "ETH"];
+        _logger.LogDebug("CoinbaseClient initialized with Ticker endpoint: {Ticker}", _endpoints.Ticker);
+    }
 
-        public string ExchangeName => "Coinbase";
-
-        public CoinbaseClient(HttpClient httpClient, ILogger<CoinbaseClient> logger)
+    public async Task<IEnumerable<CryptoSymbol>> GetSymbolsAsync(CancellationToken cancellationToken = default)
+    {
+        try
         {
-            _httpClient = httpClient;
-            _logger = logger;
-        }
+            var response = await _httpClient.GetFromJsonAsync<IReadOnlyList<CoinbaseProductResponse>>(
+                _endpoints.Symbols, cancellationToken);
 
-        public async Task<IEnumerable<CryptoSymbol>> GetSymbolsAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<IReadOnlyList<CoinbaseProductResponse>>(
-                    "products", cancellationToken);
-
-                if (response is null)
-                    return [];
-
-                return response
-                    .Where(p => p.Status == "online")
-                    .Select(p => new CryptoSymbol(
-                        p.Id.Replace("-", ""),
-                        p.BaseCurrency,
-                        p.QuoteCurrency))
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get symbols from Coinbase");
+            if (response is null)
                 return [];
-            }
+
+            return response
+                .Where(p => p.Status == "online")
+                .Select(p => new CryptoSymbol(
+                    p.Id.Replace("-", ""),
+                    p.BaseCurrency,
+                    p.QuoteCurrency))
+                .ToList();
         }
-
-        public async Task<ExchangePrice?> GetPriceAsync(string symbol, CancellationToken cancellationToken = default)
+        catch (Exception ex)
         {
-            try
-            {
-                var formattedSymbol = FormatSymbol(symbol);
+            _logger.LogError(ex, "Failed to get symbols from Coinbase");
+            return [];
+        }
+    }
 
-                var tickerTask = _httpClient.GetFromJsonAsync<CoinbaseTickerResponse>(
-                    $"products/{formattedSymbol}/ticker", cancellationToken);
+    public async Task<ExchangePrice?> GetPriceAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var formattedSymbol = FormatSymbol(symbol);
+            var tickerEndpoint = _endpoints.Ticker.Replace("{symbol}", formattedSymbol);
 
-                var statsTask = _httpClient.GetFromJsonAsync<CoinbaseStatsResponse>(
-                    $"products/{formattedSymbol}/stats", cancellationToken);
+            _logger.LogDebug("Coinbase: Fetching price from endpoint: {Endpoint}", tickerEndpoint);
 
-                await Task.WhenAll(tickerTask, statsTask);
+            var tickerResponse = await _httpClient.GetFromJsonAsync<CoinbaseTickerResponse>(
+                tickerEndpoint, cancellationToken);
 
-                var ticker = await tickerTask;
-                var stats = await statsTask;
-
-                if (ticker is null || stats is null)
-                    return null;
-
-                return new ExchangePrice(
-                    exchangeName: ExchangeName,
-                    symbol: symbol.ToUpperInvariant(),
-                    bidPrice: decimal.Parse(ticker.Bid),
-                    askPrice: decimal.Parse(ticker.Ask),
-                    lastPrice: decimal.Parse(ticker.Price),
-                    volume24H: decimal.Parse(stats.Volume),
-                    timestamp: DateTime.UtcNow);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get price for {Symbol} from Coinbase", symbol);
+            if (tickerResponse is null)
                 return null;
-            }
+
+            return new ExchangePrice(
+                exchangeName: ExchangeName,
+                symbol: symbol.ToUpperInvariant(),
+                bidPrice: decimal.Parse(tickerResponse.Bid),
+                askPrice: decimal.Parse(tickerResponse.Ask),
+                lastPrice: decimal.Parse(tickerResponse.Price),
+                volume24H: decimal.Parse(tickerResponse.Volume),
+                timestamp: DateTime.UtcNow);
         }
-
-        public async Task<IEnumerable<ExchangePrice>> GetAllPricesAsync(CancellationToken cancellationToken = default)
+        catch (Exception ex)
         {
-            var symbols = await GetSymbolsAsync(cancellationToken);
-            var tasks = symbols.Take(50).Select(s => GetPriceAsync(s.Symbol, cancellationToken));
-            var results = await Task.WhenAll(tasks);
-
-            return results.Where(p => p is not null).Cast<ExchangePrice>();
+            _logger.LogError(ex, "Failed to get price for {Symbol} from Coinbase", symbol);
+            return null;
         }
+    }
 
-        private static string FormatSymbol(string symbol)
-        {
-            foreach (var quote in QuoteCurrencies)
+    public async Task<IEnumerable<ExchangePrice>> GetAllPricesAsync(CancellationToken cancellationToken = default)
+    {
+        var symbols = await GetSymbolsAsync(cancellationToken);
+        var tasks = symbols.Take(50).Select(s => GetPriceAsync(s.Symbol, cancellationToken));
+        var results = await Task.WhenAll(tasks);
+
+        return results.Where(p => p is not null).Cast<ExchangePrice>();
+    }
+
+    private static string FormatSymbol(string symbol)
+    {
+        foreach (var quote in QuoteCurrencies)
+            if (symbol.EndsWith(quote, StringComparison.OrdinalIgnoreCase))
             {
-                if (symbol.EndsWith(quote, StringComparison.OrdinalIgnoreCase))
-                {
-                    var baseAsset = symbol[..^quote.Length];
-                    return $"{baseAsset}-{quote}";
-                }
+                var baseAsset = symbol[..^quote.Length];
+                return $"{baseAsset}-{quote}";
             }
-            return symbol;
-        }
+        return symbol;
     }
 }

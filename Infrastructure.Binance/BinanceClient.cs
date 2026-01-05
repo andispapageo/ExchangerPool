@@ -1,107 +1,115 @@
 ﻿using Domain.Core.Entities;
 using Domain.Core.Interfaces;
+using Domain.Core.Options;
 using Infrastructure.Binance.Models;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Binance
+namespace Infrastructure.Binance;
+
+public sealed class BinanceClient : IExchangeClient
 {
-    public sealed class BinanceClient : IExchangeClient
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<BinanceClient> _logger;
+    private readonly EndpointOptions _endpoints;
+    public string ExchangeName => "Binance";
+
+    public BinanceClient(
+        HttpClient httpClient,
+        ILogger<BinanceClient> logger,
+        IOptionsSnapshot<ExchangeOptions> options)
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<BinanceClient> _logger;
+        _httpClient = httpClient;
+        _logger = logger;
+        _endpoints = options.Get("Binance").Endpoints;
+        
 
-        public string ExchangeName => "Binance";
+        _logger.LogDebug("BinanceClient initialized with Ticker endpoint: {Ticker}", _endpoints.Ticker);
+    }
 
-        public BinanceClient(HttpClient httpClient, ILogger<BinanceClient> logger)
+    public async Task<IEnumerable<CryptoSymbol>> GetSymbolsAsync(CancellationToken cancellationToken = default)
+    {
+        try
         {
-            _httpClient = httpClient;
-            _logger = logger;
-        }
+            var response = await _httpClient.GetFromJsonAsync<BinanceExchangeInfoResponse>(
+                _endpoints.Symbols, cancellationToken);
 
-        public async Task<IEnumerable<CryptoSymbol>> GetSymbolsAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<BinanceExchangeInfoResponse>(
-                    "api/v3/exchangeInfo", cancellationToken);
-
-                if (response?.Symbols is null)
-                    return [];
-
-                return response.Symbols
-                    .Where(s => s.Status == "TRADING")
-                    .Select(s => new CryptoSymbol(s.Symbol, s.BaseAsset, s.QuoteAsset))
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get symbols from Binance");
+            if (response?.Symbols is null)
                 return [];
-            }
+
+            return response.Symbols
+                .Where(s => s.Status == "TRADING")
+                .Select(s => new CryptoSymbol(s.Symbol, s.BaseAsset, s.QuoteAsset))
+                .ToList();
         }
-
-        public async Task<ExchangePrice?> GetPriceAsync(string symbol, CancellationToken cancellationToken = default)
+        catch (Exception ex)
         {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<BinanceTickerResponse>(
-                    $"api/v3/ticker/24hr?symbol={symbol.ToUpperInvariant()}", cancellationToken);
-
-                return response is null ? null : MapToExchangePrice(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get price for {Symbol} from Binance", symbol);
-                return null;
-            }
+            _logger.LogError(ex, "Failed to get symbols from Binance");
+            return [];
         }
+    }
 
-        public async Task<IEnumerable<ExchangePrice>> GetAllPricesAsync(CancellationToken cancellationToken = default)
+    public async Task<ExchangePrice?> GetPriceAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<IReadOnlyList<BinanceTickerResponse>>(
-                    "api/v3/ticker/24hr", cancellationToken);
+            var formattedSymbol = symbol.ToUpperInvariant();
+            var endpoint = _endpoints.Ticker.Replace("{symbol}", formattedSymbol);
 
-                if (response is null)
-                    return [];
+            _logger.LogDebug("Binance: Fetching price from endpoint: {Endpoint}", endpoint);
 
-                return response
-                    .Select(MapToExchangePrice)
-                    .Where(p => p is not null)
-                    .Cast<ExchangePrice>()
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to get all prices from Binance");
+            var response = await _httpClient.GetFromJsonAsync<BinanceTickerResponse>(
+                endpoint, cancellationToken);
+
+            return response is null ? null : MapToExchangePrice(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get price for {Symbol} from Binance", symbol);
+            return null;
+        }
+    }
+
+    public async Task<IEnumerable<ExchangePrice>> GetAllPricesAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<IReadOnlyList<BinanceTickerResponse>>(
+                _endpoints.AllTickers, cancellationToken);
+
+            if (response is null)
                 return [];
-            }
-        }
 
-        private ExchangePrice? MapToExchangePrice(BinanceTickerResponse ticker)
+            return response
+                .Select(MapToExchangePrice)
+                .Where(p => p is not null)
+                .Cast<ExchangePrice>()
+                .ToList();
+        }
+        catch (Exception ex)
         {
-            try
-            {
-                return new ExchangePrice(
-                    exchangeName: ExchangeName,
-                    symbol: ticker.Symbol,
-                    bidPrice: decimal.Parse(ticker.BidPrice),
-                    askPrice: decimal.Parse(ticker.AskPrice),
-                    lastPrice: decimal.Parse(ticker.LastPrice),
-                    volume24H: decimal.Parse(ticker.Volume),
-                    timestamp: DateTime.UtcNow);
-            }
-            catch
-            {
-                return null;
-            }
+            _logger.LogError(ex, "Failed to get all prices from Binance");
+            return [];
+        }
+    }
+
+    private ExchangePrice? MapToExchangePrice(BinanceTickerResponse ticker)
+    {
+        try
+        {
+            return new ExchangePrice(
+                exchangeName: ExchangeName,
+                symbol: ticker.Symbol,
+                bidPrice: decimal.Parse(ticker.BidPrice),
+                askPrice: decimal.Parse(ticker.AskPrice),
+                lastPrice: decimal.Parse(ticker.LastPrice),
+                volume24H: decimal.Parse(ticker.Volume),
+                timestamp: DateTime.UtcNow);
+        }
+        catch
+        {
+            return null;
         }
     }
 }

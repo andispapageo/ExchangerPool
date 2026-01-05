@@ -89,7 +89,7 @@ public sealed class LiquidityAggregator : ILiquidityAggregator
         return commonSymbols;
     }
 
-    public async Task<IEnumerable<AggregatedPrice>> GetArbitrageOpportunitiesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<AggregatedPrice>> GetArbitrageRiskAsync(CancellationToken cancellationToken = default)
     {
         var allPrices = await GetAllBestPricesAsync(cancellationToken);
 

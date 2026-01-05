@@ -7,7 +7,7 @@ namespace Application.Common.Config
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<GetBestPriceUseCase>();
-            services.AddScoped<GetArbitrageOpportunitiesUseCase>();
+            services.AddScoped<GetArbitrageRiskUseCase>();
             services.AddScoped<GetAvailableSymbolsUseCase>();
 
             return services;

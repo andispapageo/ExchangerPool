@@ -1,17 +1,22 @@
 using Application.Common.Config;
 using Infrastructure.Binance.Config;
+using Infrastructure.Bybit.Config;
 using Infrastructure.Caching.Config;
 using Infrastructure.Coinbase.Config;
 using Infrastructure.Kraken.Config;
-
+using Infrastructure.KuCoin.Config;
+using Infrastructure.OKX.Config;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 builder.Services.AddApplication();
-builder.Services.AddBinance();
-builder.Services.AddCoinbase();
-builder.Services.AddKraken();
+builder.Services.AddBinance(builder.Configuration);
+builder.Services.AddCoinbase(builder.Configuration);
+builder.Services.AddKraken(builder.Configuration);
+builder.Services.AddBybit(builder.Configuration);
+builder.Services.AddKuCoin(builder.Configuration);
+builder.Services.AddOKX(builder.Configuration);
 builder.Services.AddCaching();
 
 builder.Services.AddControllers();
