@@ -155,30 +155,12 @@ ExchangerPool/
    cd src/Presentation
    dotnet run
    ```
-   The gRPC server will start on `https://localhost:7001`
+  
 
-5. **Run the client** (in a new terminal)
-   ```bash
-   cd Client
-   dotnet run
-   ```
 
 ## 📡 API Reference
+<img width="937" height="441" alt="image" src="https://github.com/user-attachments/assets/3506068d-5360-46f1-951b-c423679ffa5e" />
 
-### gRPC Service Definition
-
-```protobuf
-service CryptoQuote {
-  // Get a single cryptocurrency quote
-  rpc GetQuote (QuoteRequest) returns (QuoteResponse);
-  
-  // Get multiple cryptocurrency quotes
-  rpc GetMultipleQuotes (MultipleQuoteRequest) returns (MultipleQuoteResponse);
-  
-  // Stream real-time quotes
-  rpc StreamQuotes (StreamQuoteRequest) returns (stream QuoteResponse);
-}
-```
 
 ### Example Usage
 
