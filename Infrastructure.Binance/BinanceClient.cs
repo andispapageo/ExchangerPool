@@ -23,7 +23,7 @@ public sealed class BinanceClient : IExchangeClient
         _httpClient = httpClient;
         _logger = logger;
         _endpoints = options.Get("Binance").Endpoints;
-        
+
 
         _logger.LogDebug("BinanceClient initialized with Ticker endpoint: {Ticker}", _endpoints.Ticker);
     }
