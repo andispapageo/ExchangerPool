@@ -106,13 +106,6 @@ ExchangerPool/
 │   │   └── Persistence/
 │   │       └── InMemoryCryptoQuoteRepository.cs
 │   │
-│   └── Presentation/                    # gRPC API
-│       ├── Services/
-│       │   └── CryptoQuoteGrpcService.cs
-│       ├── Protos/
-│       │   └── cryptoquote.proto
-│       └── Program.cs
-│
 ├── Client/                              # Example client application
 │   └── Program.cs
 │
