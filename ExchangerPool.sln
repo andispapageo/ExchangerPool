@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36811.4 d17.14
+VisualStudioVersion = 17.14.36811.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExchangerPool", "ExchangerPool\ExchangerPool.csproj", "{50400296-40E7-ACBC-127C-2AFE105CC6E2}"
 EndProject
@@ -36,6 +36,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.KuCoin", "Infrastructure.KuCoin\Infrastructure.KuCoin.csproj", "{752819B4-5A0E-4EB5-997B-052E8DA5FC48}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.OKX", "Infrastructure.OKX\Infrastructure.OKX.csproj", "{17535406-C37B-4BE3-974B-FD7694300D7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Common", "Infrastructure.Common\Infrastructure.Common.csproj", "{60794EE9-24F0-437D-B7A2-10E5DFB8C172}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{17535406-C37B-4BE3-974B-FD7694300D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17535406-C37B-4BE3-974B-FD7694300D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17535406-C37B-4BE3-974B-FD7694300D7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60794EE9-24F0-437D-B7A2-10E5DFB8C172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60794EE9-24F0-437D-B7A2-10E5DFB8C172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60794EE9-24F0-437D-B7A2-10E5DFB8C172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60794EE9-24F0-437D-B7A2-10E5DFB8C172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +121,7 @@ Global
 		{C207E770-14F5-44BB-8D34-9C68BBFF9E5B} = {4534636A-5316-4B8D-8A7C-4E24664AF657}
 		{752819B4-5A0E-4EB5-997B-052E8DA5FC48} = {4534636A-5316-4B8D-8A7C-4E24664AF657}
 		{17535406-C37B-4BE3-974B-FD7694300D7C} = {4534636A-5316-4B8D-8A7C-4E24664AF657}
+		{60794EE9-24F0-437D-B7A2-10E5DFB8C172} = {4534636A-5316-4B8D-8A7C-4E24664AF657}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC66BAD6-E61D-4747-A7E1-18D531B2BDFD}

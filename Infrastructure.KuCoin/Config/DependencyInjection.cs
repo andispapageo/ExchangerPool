@@ -3,6 +3,8 @@ using Domain.Core.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Infrastructure.Common.Extensions;
+
 namespace Infrastructure.KuCoin.Config;
 public static class DependencyInjection
 {
@@ -23,7 +25,8 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(options.BaseUrl);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
-        });
+        }).AddExchangeResilienceHandler("KuCoin");
+
         services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, KuCoinClient>(sp =>
             sp.GetRequiredService<KuCoinClient>()));
 
