@@ -1,4 +1,4 @@
-namespace Domain.Core.Specifications
+namespace Domain.Core.Interfaces
 {
     public interface ISpecification<T>
     {

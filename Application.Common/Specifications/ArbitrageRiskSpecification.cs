@@ -1,5 +1,6 @@
 using Domain.Core.Entities.Aggregates;
-using Domain.Core.Specifications;
+using Domain.Core.Interfaces;
+
 namespace Application.Common.Specifications;
 
 public class ArbitrageRiskSpecification(decimal minProfitPercent = 0.1m) : Specification<AggregatedPrice>
