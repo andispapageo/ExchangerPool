@@ -1,10 +1,13 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces;
-using Application.Common.UseCases;
+using Application.Common.Mappings;
+using Application.Common.Specifications;
+using Domain.Core.Interfaces;
 namespace Application.Common.Features.Queries;
 public record GetBestPricesBySymbolQuery(string Symbol) : IQuery<Result<AggregatedPriceDto>>;
-sealed record GetBestPricesBySymbolQueryHandler(GetBestPriceUseCase getBestPriceUseCase)
-   : IQueryHandler<GetBestPricesBySymbolQuery, Result<AggregatedPriceDto>>
+
+public sealed class GetBestPricesBySymbolQueryHandler(ILiquidityAggregator aggregator)
+    : IQueryHandler<GetBestPricesBySymbolQuery, Result<AggregatedPriceDto>>
 {
     public Task<Result<AggregatedPriceDto>> Handle(
         GetBestPricesBySymbolQuery request,
@@ -14,10 +17,13 @@ sealed record GetBestPricesBySymbolQueryHandler(GetBestPriceUseCase getBestPrice
         GetBestPricesBySymbolQuery request,
         CancellationToken cancellationToken)
     {
-        var result = await getBestPriceUseCase.ExecuteAsync(request.Symbol, cancellationToken);
+        var specification = new SymbolSpecification(request.Symbol);
+        var result = await aggregator.GetBestPriceAsync(request.Symbol, cancellationToken);
+        if (result is null || !specification.IsSatisfiedBy(result))
+        {
+            return Result<AggregatedPriceDto>.NotFound($"Symbol '{request.Symbol}' not found");
+        }
 
-        return result is not null
-            ? Result<AggregatedPriceDto>.Success(result)
-            : Result<AggregatedPriceDto>.NotFound($"Symbol '{request.Symbol}' not found");
+        return Result<AggregatedPriceDto>.Success(result.ToDto());
     }
 }

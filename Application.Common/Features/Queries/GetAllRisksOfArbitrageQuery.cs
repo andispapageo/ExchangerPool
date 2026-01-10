@@ -14,7 +14,7 @@ sealed record GetRiskOfArbitrageQueryHandler(GetArbitrageRiskUseCase getArbitrag
         GetAllRisksOfArbitrageQuery request,
         CancellationToken cancellationToken)
     {
-        var result = await getArbitrageRiskUseCase.ExecuteAsync(cancellationToken);
+        var result = await getArbitrageRiskUseCase.ExecuteAsync(null, cancellationToken);
 
         return result is not null
             ? Result<IEnumerable<AggregatedPriceDto>>.Success(result)

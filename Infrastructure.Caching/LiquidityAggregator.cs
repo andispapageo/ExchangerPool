@@ -94,7 +94,7 @@ public sealed class LiquidityAggregator : ILiquidityAggregator
 
         return allPrices
             .Where(p => p.HasArbitrageOpportunity)
-            .OrderByDescending(p => p.ArbitrageOpportunity)
+            .OrderByDescending(p => p.ArbitrageRisk)
             .ToList();
     }
 

@@ -14,7 +14,7 @@ namespace Application.Common.Mappings
               BestAskPrice: aggregate.BestAsk.AskPrice,
               BestAskExchange: aggregate.BestAsk.ExchangeName,
               Spread: aggregate.BestAsk.AskPrice - aggregate.BestBid.BidPrice,
-              ArbitrageOpportunityPercent: aggregate.ArbitrageOpportunity,
+              ArbitrageOpportunityPercent: aggregate.ArbitrageRisk,
               HasArbitrageOpportunity: aggregate.HasArbitrageOpportunity,
               AggregatedAt: aggregate.AggregatedAt,
               AllPrices: aggregate.AllPrices.Select(p => p.ToDto()).ToList());
