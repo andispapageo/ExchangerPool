@@ -5,7 +5,7 @@
         public string Symbol { get; }
         public ExchangePrice BestBid { get; }
         public ExchangePrice BestAsk { get; }
-        public decimal ArbitrageOpportunity { get; }
+        public decimal ArbitrageRisk { get; }
         public IReadOnlyList<ExchangePrice> AllPrices { get; }
         public DateTime AggregatedAt { get; }
 
@@ -20,7 +20,7 @@
             BestAsk = bestAsk;
             AllPrices = allPrices;
             AggregatedAt = DateTime.UtcNow;
-            ArbitrageOpportunity = CalculateArbitrage(bestBid, bestAsk);
+            ArbitrageRisk = CalculateArbitrage(bestBid, bestAsk);
         }
 
         public static AggregatedPrice Create(string symbol, IEnumerable<ExchangePrice> prices)
@@ -43,6 +43,6 @@
             return 0;
         }
 
-        public bool HasArbitrageOpportunity => ArbitrageOpportunity > 0;
+        public bool HasArbitrageOpportunity => ArbitrageRisk > 0;
     }
 }
