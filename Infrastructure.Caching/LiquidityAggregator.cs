@@ -37,7 +37,6 @@ public sealed class LiquidityAggregator : ILiquidityAggregator
 
         var tasks = _exchangeClients.Select(c => GetPriceSafeAsync(c, symbol, cancellationToken));
         var prices = await Task.WhenAll(tasks);
-
         var validPrices = prices.Where(p => p is not null).Cast<ExchangePrice>().ToList();
 
         if (validPrices.Count == 0)
