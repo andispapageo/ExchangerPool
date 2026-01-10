@@ -3,8 +3,8 @@ using Application.Common.Interfaces;
 using Application.Common.UseCases;
 namespace Application.Common.Features.Queries;
 public record GetBestPricesBySymbolQuery(string Symbol) : IQuery<Result<AggregatedPriceDto>>;
- sealed record GetBestPricesBySymbolQueryHandler(GetBestPriceUseCase getBestPriceUseCase)
-    : IQueryHandler<GetBestPricesBySymbolQuery, Result<AggregatedPriceDto>>
+sealed record GetBestPricesBySymbolQueryHandler(GetBestPriceUseCase getBestPriceUseCase)
+   : IQueryHandler<GetBestPricesBySymbolQuery, Result<AggregatedPriceDto>>
 {
     public Task<Result<AggregatedPriceDto>> Handle(
         GetBestPricesBySymbolQuery request,
