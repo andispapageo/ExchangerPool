@@ -8,7 +8,6 @@ public static class DependencyInjection
     {
         services.AddMemoryCache();
         services.AddScoped<ILiquidityAggregator, LiquidityAggregator>();
-
         return services;
     }
 }

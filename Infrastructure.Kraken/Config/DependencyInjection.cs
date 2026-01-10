@@ -3,7 +3,6 @@ using Domain.Core.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
 namespace Infrastructure.Kraken.Config;
 public static class DependencyInjection
 {
