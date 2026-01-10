@@ -25,6 +25,7 @@ namespace ExchangerPool.Configs
                 app.UseHttpsRedirection();
                 app.UseAuthorization();
                 app.MapControllers();
+                app.MapReverseProxy();
                 return app;
             }, cancellationToken);
         }

@@ -23,6 +23,9 @@ namespace ExchangerPool.Configs
             builder.Services.AddOKX(builder.Configuration);
             builder.Services.AddCaching();
 
+            builder.Services.AddReverseProxy()
+                .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
             builder.Services.AddFastEndpoints()
                 .SwaggerDocument(o =>
                 {

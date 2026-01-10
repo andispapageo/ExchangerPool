@@ -3,6 +3,7 @@ using Domain.Core.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Infrastructure.Common.Extensions;
 namespace Infrastructure.OKX.Config;
 public static class DependencyInjection
 {
@@ -22,7 +23,8 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(options.BaseUrl);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
-        });
+        }).AddExchangeResilienceHandler("OKX");
+
         services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, OKXClient>(sp =>
             sp.GetRequiredService<OKXClient>()));
 
