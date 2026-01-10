@@ -1,12 +1,12 @@
-﻿using Infrastructure.Binance.Config;
+﻿using Application.Common.Config;
+using FastEndpoints.Swagger;
+using Infrastructure.Binance.Config;
 using Infrastructure.Bybit.Config;
 using Infrastructure.Caching.Config;
 using Infrastructure.Coinbase.Config;
 using Infrastructure.Kraken.Config;
 using Infrastructure.KuCoin.Config;
 using Infrastructure.OKX.Config;
-using Application.Common.Config;
-using FastEndpoints.Swagger;
 
 namespace ExchangerPool.Configs
 {

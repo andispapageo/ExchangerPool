@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace ExchangerPool.LiquidityContributors
+﻿namespace ExchangerPool.LiquidityContributors
 {
     public class GetBestPriceBySymbolRequest
     {
