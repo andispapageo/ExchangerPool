@@ -1,3 +1,5 @@
+using Domain.Core.Interfaces;
+
 namespace Domain.Core.Specifications
 {
     public class AndSpecification<T> : Specification<T>
