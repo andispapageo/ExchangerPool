@@ -9,7 +9,7 @@ public class GetAllRisksOfArbirtage(ILogger<GetAllRisksOfArbirtage> logger, IMed
 {
     public override void Configure()
     {
-        Get("/Liquidity/arbitrage");
+        Get(GetRiskOfArbirtageRequest.Route);
         AllowAnonymous();
         Summary(s =>
         {
