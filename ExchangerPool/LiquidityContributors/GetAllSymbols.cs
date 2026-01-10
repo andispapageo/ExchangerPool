@@ -9,7 +9,7 @@ public class GetAllSymbols(ILogger<GetAllSymbols> logger, IMediator mediator)
 {
     public override void Configure()
     {
-        Get("/Liquidity/symbols");
+        Get(GetAllSymbolsRequest.Route);
         AllowAnonymous();
         Summary(s =>
         {
