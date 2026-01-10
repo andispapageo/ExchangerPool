@@ -1,4 +1,5 @@
-﻿using Application.Common.UseCases;
+﻿using Application.Common.Behaviors;
+using Application.Common.UseCases;
 using Microsoft.Extensions.DependencyInjection;
 namespace Application.Common.Config
 {
@@ -6,7 +7,15 @@ namespace Application.Common.Config
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+            var assembly = typeof(DependencyInjection).Assembly;
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(assembly);
+                cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                cfg.AddOpenBehavior(typeof(PerformanceBehavior<,>));
+            });
             services.AddScoped<GetBestPriceUseCase>();
             services.AddScoped<GetArbitrageRiskUseCase>();
             services.AddScoped<GetAvailableSymbolsUseCase>();
