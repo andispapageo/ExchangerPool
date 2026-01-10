@@ -6,6 +6,7 @@ namespace Application.Common.Config
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
             services.AddScoped<GetBestPriceUseCase>();
             services.AddScoped<GetArbitrageRiskUseCase>();
             services.AddScoped<GetAvailableSymbolsUseCase>();
