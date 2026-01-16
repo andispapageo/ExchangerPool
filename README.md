@@ -117,7 +117,7 @@ ExchangerPool/
 └── ExchangerPool.sln
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -151,7 +151,7 @@ ExchangerPool/
   
 
 
-## 📡 API Reference
+## API Reference
 <img width="937" height="441" alt="image" src="https://github.com/user-attachments/assets/3506068d-5360-46f1-951b-c423679ffa5e" />
 
 
@@ -202,7 +202,7 @@ await foreach (var quote in call.ResponseStream.ReadAllAsync())
 }
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### appsettings.json
 
@@ -264,7 +264,7 @@ Track crypto portfolio values across multiple exchanges.
 - **Memory Usage**: < 200MB under normal load
 - **CPU Usage**: < 5% idle, < 40% under heavy load
 
-## 🛠️ Development
+## Development
 
 ### Adding a New Exchange
 
@@ -286,29 +286,3 @@ public class NewExchangeDataProvider : ICryptoDataProvider
     }
 }
 ```
-
-### Code Style
-
-This project follows:
-- [C# Coding Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
-- [.NET Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/)
-
-## Contributing
-
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) first.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👤 Author
-
-**Andis Papageorgiou**
-- GitHub: [@andispapageo](https://github.com/andispapageo)
-
