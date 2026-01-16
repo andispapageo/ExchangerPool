@@ -256,7 +256,7 @@ Build automated market-making strategies with aggregated data.
 ### 5. Portfolio Tracking
 Track crypto portfolio values across multiple exchanges.
 
-## 📊 Performance
+## Performance
 
 - **Response Time**: < 100ms average for single quote requests
 - **Throughput**: 10,000+ requests per second
