@@ -4,29 +4,32 @@ using Infrastructure.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-namespace Infrastructure.OKX.Config;
+
+namespace Infrastructure.KuCoin.Config;
 public static class DependencyInjection
 {
-    public const string SectionName = "Exchanges:OKX";
-    public const string OptionsName = "OKX";
-    public static IServiceCollection AddOKX(this IServiceCollection services, IConfiguration configuration)
+    public const string SectionName = "Exchanges:KuCoin";
+    public const string OptionsName = "KuCoin";
+
+    public static IServiceCollection AddKuCoin(this IServiceCollection services, IConfiguration configuration)
     {
         var options = configuration.GetSection(SectionName).Get<ExchangeOptions>()
-            ?? new ExchangeOptions { BaseUrl = "https://www.okx.com/" };
+            ?? new ExchangeOptions { BaseUrl = "https://api.kucoin.com/" };
 
         if (!options.Enabled)
             return services;
 
         services.Configure<ExchangeOptions>(OptionsName, configuration.GetSection(SectionName));
-        services.AddHttpClient<OKXClient>(client =>
+        services.AddHttpClient<KuCoinClient>(client =>
         {
             client.BaseAddress = new Uri(options.BaseUrl);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
-        }).AddExchangeResilienceHandler("OKX");
+        }).AddExchangeResilienceHandler("KuCoin");
 
-        services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, OKXClient>(sp =>
-            sp.GetRequiredService<OKXClient>()));
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, KuCoinClient>(sp =>
+            sp.GetRequiredService<KuCoinClient>()));
+
 
         return services;
     }

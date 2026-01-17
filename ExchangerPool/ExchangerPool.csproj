@@ -1,14 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f1c15628-83bd-4514-bf0f-2647087390e4</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints" Version="7.1.1" />
     <PackageReference Include="FastEndpoints.Swagger" Version="7.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.23" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
@@ -17,9 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Common\Application.Common.csproj" />
     <ProjectReference Include="..\ExchangerPool.ServiceDefaults\ExchangerPool.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Infrastructure.Aggregator\Infrastructure.Aggregator.csproj" />
     <ProjectReference Include="..\Infrastructure.Binance\Infrastructure.Binance.csproj" />
     <ProjectReference Include="..\Infrastructure.Bybit\Infrastructure.Bybit.csproj" />
-    <ProjectReference Include="..\Infrastructure.Caching\Infrastructure.Caching.csproj" />
     <ProjectReference Include="..\Infrastructure.Coinbase\Infrastructure.Coinbase.csproj" />
     <ProjectReference Include="..\Infrastructure.Kraken\Infrastructure.Kraken.csproj" />
     <ProjectReference Include="..\Infrastructure.KuCoin\Infrastructure.KuCoin.csproj" />

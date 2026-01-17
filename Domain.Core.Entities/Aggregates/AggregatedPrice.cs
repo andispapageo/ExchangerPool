@@ -1,4 +1,6 @@
-﻿namespace Domain.Core.Entities.Aggregates
+﻿using Domain.Core.Entities.Entities;
+
+namespace Domain.Core.Entities.Aggregates
 {
     public sealed class AggregatedPrice
     {

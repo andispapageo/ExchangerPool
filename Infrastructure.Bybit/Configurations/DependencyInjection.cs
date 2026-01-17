@@ -4,30 +4,31 @@ using Infrastructure.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-namespace Infrastructure.OKX.Config;
+
+namespace Infrastructure.Bybit.Config;
 public static class DependencyInjection
 {
-    public const string SectionName = "Exchanges:OKX";
-    public const string OptionsName = "OKX";
-    public static IServiceCollection AddOKX(this IServiceCollection services, IConfiguration configuration)
+    public const string SectionName = "Exchanges:Bybit";
+    public const string OptionsName = "Bybit";
+
+    public static IServiceCollection AddBybit(this IServiceCollection services, IConfiguration configuration)
     {
         var options = configuration.GetSection(SectionName).Get<ExchangeOptions>()
-            ?? new ExchangeOptions { BaseUrl = "https://www.okx.com/" };
+            ?? new ExchangeOptions { BaseUrl = "https://api.bybit.com/" };
 
         if (!options.Enabled)
             return services;
 
         services.Configure<ExchangeOptions>(OptionsName, configuration.GetSection(SectionName));
-        services.AddHttpClient<OKXClient>(client =>
+
+        services.AddHttpClient<BybitClient>(client =>
         {
             client.BaseAddress = new Uri(options.BaseUrl);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
-        }).AddExchangeResilienceHandler("OKX");
+        }).AddExchangeResilienceHandler("ByBit");
 
-        services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, OKXClient>(sp =>
-            sp.GetRequiredService<OKXClient>()));
-
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IExchangeClient, BybitClient>(sp => sp.GetRequiredService<BybitClient>()));
         return services;
     }
 }

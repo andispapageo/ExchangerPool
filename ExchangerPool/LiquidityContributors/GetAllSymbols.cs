@@ -1,9 +1,8 @@
 ﻿using Application.Common.DTOs;
-using Application.Common.Features.Queries;
+using Application.Common.Features.UseCases.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 namespace ExchangerPool.LiquidityContributors;
-
 public class GetAllSymbols(ILogger<GetAllSymbols> logger, IMediator mediator)
      : EndpointWithoutRequest<Results<Ok<IEnumerable<CryptoSymbolDto>>, NotFound, ProblemHttpResult>>
 {
@@ -30,8 +29,7 @@ public class GetAllSymbols(ILogger<GetAllSymbols> logger, IMediator mediator)
     {
         logger.LogInformation("Started getting all symbols");
         var result = await mediator.Send(new GetAllSymbolsQuery(), ct);
-
-        return result is not null
+        return result.IsSuccess
             ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }
