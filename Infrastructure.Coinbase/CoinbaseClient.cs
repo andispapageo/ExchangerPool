@@ -1,4 +1,4 @@
-﻿using Domain.Core.Entities;
+﻿using Domain.Core.Entities.Entities;
 using Domain.Core.Interfaces;
 using Domain.Core.Options;
 using Infrastructure.Coinbase.Models;

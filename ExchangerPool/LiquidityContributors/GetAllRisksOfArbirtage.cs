@@ -1,9 +1,8 @@
 ﻿using Application.Common.DTOs;
-using Application.Common.Features.Queries;
+using Application.Common.Features.UseCases.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 namespace ExchangerPool.LiquidityContributors;
-
 public class GetAllRisksOfArbirtage(ILogger<GetAllRisksOfArbirtage> logger, IMediator mediator)
     : EndpointWithoutRequest<Results<Ok<IEnumerable<AggregatedPriceDto>>, NotFound, ProblemHttpResult>>
 {
@@ -26,13 +25,11 @@ public class GetAllRisksOfArbirtage(ILogger<GetAllRisksOfArbirtage> logger, IMed
           .ProducesProblem(404));
     }
 
-
     public override async Task<Results<Ok<IEnumerable<AggregatedPriceDto>>, NotFound, ProblemHttpResult>> ExecuteAsync(CancellationToken ct)
     {
-        logger.LogInformation("Started getting all arbirtage risks");
+        logger.LogInformation("Started getting all arbitrage risks");
         var result = await mediator.Send(new GetAllRisksOfArbitrageQuery(), ct);
-
-        return result is not null
+        return result.IsSuccess
             ? TypedResults.Ok(result.Value)
             : TypedResults.NotFound();
     }

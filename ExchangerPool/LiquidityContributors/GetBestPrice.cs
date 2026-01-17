@@ -1,13 +1,12 @@
 ﻿using Application.Common.DTOs;
-using Application.Common.Features.Queries;
+using Application.Common.Features.UseCases.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 namespace ExchangerPool.LiquidityContributors;
+
 public class GetBestPrice(ILogger<GetBestPrice> logger, IMediator mediator)
     : Endpoint<GetBestPriceBySymbolRequest,
-             Results<Ok<AggregatedPriceDto>,
-                 NotFound,
-                 ProblemHttpResult>>
+             Results<Ok<AggregatedPriceDto>, NotFound, ProblemHttpResult>>
 {
     public override void Configure()
     {
@@ -29,13 +28,14 @@ public class GetBestPrice(ILogger<GetBestPrice> logger, IMediator mediator)
           .ProducesProblem(404));
     }
 
-    public override async Task<Results<Ok<AggregatedPriceDto>, NotFound, ProblemHttpResult>> ExecuteAsync(GetBestPriceBySymbolRequest req, CancellationToken ct)
+    public override async Task<Results<Ok<AggregatedPriceDto>, NotFound, ProblemHttpResult>> ExecuteAsync(
+        GetBestPriceBySymbolRequest req, CancellationToken ct)
     {
         logger.LogInformation("Getting best price for {Symbol}", req.Symbol?.ToUpper());
         var result = await mediator.Send(new GetBestPricesBySymbolQuery(req.Symbol?.ToUpper() ?? string.Empty), ct);
 
-        return result is not null
-                  ? TypedResults.Ok(result.Value)
-                  : TypedResults.NotFound();
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
+            : TypedResults.NotFound();
     }
 }

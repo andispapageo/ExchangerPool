@@ -1,4 +1,4 @@
-﻿using Domain.Core.Entities;
+﻿using Domain.Core.Entities.Entities;
 
 namespace Domain.Core.Interfaces;
 public interface IExchangeClient
